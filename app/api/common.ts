@@ -40,6 +40,7 @@ export async function requestOpenai(req: NextRequest) {
       }),
     },
     cache: "no-store",
+    redirect: "follow",
     method: req.method,
     body: req.body,
     signal: controller.signal,
