@@ -43,6 +43,8 @@ export async function requestOpenai(req: NextRequest) {
     redirect: "follow",
     method: req.method,
     body: req.body,
+    // @ts-ignore
+    duplex: "half",
     signal: controller.signal,
   };
 
