@@ -28,7 +28,7 @@ export async function requestOpenai(req: NextRequest) {
 
   const timeoutId = setTimeout(() => {
     controller.abort();
-  }, 20 * 60 * 1000);
+  }, 10 * 60 * 1000);
 
   const fetchUrl = `${baseUrl}/${openaiPath}`;
   const fetchOptions: RequestInit = {
@@ -48,18 +48,16 @@ export async function requestOpenai(req: NextRequest) {
 
   try {
     const res = await fetch(fetchUrl, fetchOptions);
-    if (res.status === 401) {
-      // to prevent browser prompt for credentials
-      const newHeaders = new Headers(res.headers);
-      newHeaders.delete("www-authenticate");
-      newHeaders.set("X-Accel-Buffering", "no");
-      newHeaders.delete("content-encoding");
-      return new Response(res.body, {
-        status: res.status,
-        statusText: res.statusText,
-        headers: newHeaders,
-      });
-    }
+    // to prevent browser prompt for credentials
+    const newHeaders = new Headers(res.headers);
+    newHeaders.delete("www-authenticate");
+    newHeaders.set("X-Accel-Buffering", "no");
+    newHeaders.delete("content-encoding");
+    return new Response(res.body, {
+      status: res.status,
+      statusText: res.statusText,
+      headers: newHeaders,
+    });
 
     return res;
   } finally {
