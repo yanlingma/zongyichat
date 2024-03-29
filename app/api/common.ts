@@ -40,11 +40,11 @@ export async function requestOpenai(req: NextRequest) {
       }),
     },
     cache: "no-store",
-    redirect: "follow",
+    // redirect: "follow",
     method: req.method,
     body: req.body,
     // @ts-ignore
-    duplex: "half",
+    // duplex: "half",
     signal: controller.signal,
   };
 
@@ -53,8 +53,8 @@ export async function requestOpenai(req: NextRequest) {
     // to prevent browser prompt for credentials
     console.log(res.redirected);
     console.log(res.status);
-    console.log(res.statusText);
-    console.log(JSON.stringify(res));
+    console.log(res.body);
+    console.log(res.url);
     while (res.redirected) {
       const redirectURL = res.url;
       res = await fetch(redirectURL, fetchOptions);
