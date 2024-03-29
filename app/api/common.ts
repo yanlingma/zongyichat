@@ -55,18 +55,19 @@ export async function requestOpenai(req: NextRequest) {
 
     for (let i = 0; i < 5; i++) {
       try {
+        console.log("fetch before for..." + i);
         res = await fetch(fetchUrl, fetchOptions);
-        // to prevent browser prompt for credentials
-        console.log(res.redirected);
-        console.log(res.status);
-        console.log(res.body);
-        console.log(res.url);
+        console.log("redirected" + res.redirected);
+        console.log("status" + res.status);
+        console.log("body" + res.body);
+        console.log("url" + res.url);
         while (res.redirected) {
           const redirectURL = res.url;
           res = await fetch(redirectURL, fetchOptions);
         }
         if (!!res) break;
       } catch (error) {
+        console.log("报错啦！");
         continue;
       }
     }
