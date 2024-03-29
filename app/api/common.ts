@@ -65,7 +65,8 @@ export async function requestOpenai(req: NextRequest) {
           res = await fetch(redirectURL, fetchOptions);
         }
       } catch (error) {
-        continue;
+        // continue;
+        console.log(error);
       }
     }
 
