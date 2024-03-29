@@ -44,7 +44,7 @@ export async function requestOpenai(req: NextRequest) {
     cache: "no-store",
     // redirect: "follow",
     method: req.method,
-    body: req.body,
+    body: await req.arrayBuffer(),
     // @ts-ignore
     // duplex: "half",
     signal: controller.signal,
@@ -53,43 +53,11 @@ export async function requestOpenai(req: NextRequest) {
   try {
     console.log("fetch before...");
 
-    const res = await axios.post(fetchUrl, req.body, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: authValue,
-        ...(process.env.OPENAI_ORG_ID && {
-          "OpenAI-Organization": process.env.OPENAI_ORG_ID,
-        }),
-      },
-      signal: controller.signal,
-    });
-
-    // let res: any = null;
-
-    // for (let i = 0; i < 5; i++) {
-    //   try {
-    //     console.log("fetch before for..." + i);
-    //     res = await fetch(fetchUrl, fetchOptions);
-    //     console.log("redirected" + res.redirected);
-    //     console.log("status" + res.status);
-    //     console.log("body" + res.body);
-    //     console.log("url" + res.url);
-    //     while (res.redirected) {
-    //       const redirectURL = res.url;
-    //       res = await fetch(redirectURL, fetchOptions);
-    //     }
-    //     if (!!res) break;
-    //   } catch (error) {
-    //     console.log("报错啦！");
-    //     continue;
-    //   }
-    // }
-    //
-
+    let res = await fetch(fetchUrl, fetchOptions);
     const newHeaders = new Headers(res.headers);
     newHeaders.delete("www-authenticate");
 
-    return new Response(res.data, {
+    return new Response(res.body, {
       status: res.status,
       statusText: res.statusText,
       headers: newHeaders,
