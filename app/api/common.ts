@@ -67,8 +67,6 @@ export async function requestOpenai(req: NextRequest) {
       statusText: res.statusText,
       headers: newHeaders,
     });
-
-    return res;
   } catch (e) {
   } finally {
     clearTimeout(timeoutId);
