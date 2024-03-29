@@ -53,6 +53,8 @@ export async function requestOpenai(req: NextRequest) {
     // to prevent browser prompt for credentials
     console.log(res.redirected);
     console.log(res.status);
+    console.log(res.statusText);
+    console.log(JSON.stringify(res));
     while (res.redirected) {
       const redirectURL = res.url;
       res = await fetch(redirectURL, fetchOptions);
