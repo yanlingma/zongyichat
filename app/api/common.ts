@@ -49,12 +49,15 @@ export async function requestOpenai(req: NextRequest) {
   };
 
   try {
-    const res = await fetch(fetchUrl, fetchOptions);
+    let res = await fetch(fetchUrl, fetchOptions);
     // to prevent browser prompt for credentials
+    while (res.redirected) {
+      const redirectURL = res.url;
+      res = await fetch(redirectURL, fetchOptions);
+    }
     const newHeaders = new Headers(res.headers);
     newHeaders.delete("www-authenticate");
-    newHeaders.set("X-Accel-Buffering", "no");
-    newHeaders.delete("content-encoding");
+
     return new Response(res.body, {
       status: res.status,
       statusText: res.statusText,
