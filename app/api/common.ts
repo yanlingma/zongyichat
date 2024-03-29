@@ -52,7 +52,7 @@ export async function requestOpenai(req: NextRequest) {
     console.log("fetch before...");
 
     let res: any = null;
-    while (res != null) {
+    while (!res) {
       try {
         res = await fetch(fetchUrl, fetchOptions);
         // to prevent browser prompt for credentials
