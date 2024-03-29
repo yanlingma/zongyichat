@@ -1,5 +1,7 @@
 import { NextRequest } from "next/server";
 
+import axios from "axios";
+
 export const OPENAI_URL = "api.openai.com";
 const DEFAULT_PROTOCOL = "https";
 const PROTOCOL = process.env.PROTOCOL ?? DEFAULT_PROTOCOL;
@@ -51,31 +53,43 @@ export async function requestOpenai(req: NextRequest) {
   try {
     console.log("fetch before...");
 
-    let res: any = null;
+    const res = await axios.post(fetchUrl, req.body, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authValue,
+        ...(process.env.OPENAI_ORG_ID && {
+          "OpenAI-Organization": process.env.OPENAI_ORG_ID,
+        }),
+      },
+      signal: controller.signal,
+    });
 
-    for (let i = 0; i < 5; i++) {
-      try {
-        console.log("fetch before for..." + i);
-        res = await fetch(fetchUrl, fetchOptions);
-        console.log("redirected" + res.redirected);
-        console.log("status" + res.status);
-        console.log("body" + res.body);
-        console.log("url" + res.url);
-        while (res.redirected) {
-          const redirectURL = res.url;
-          res = await fetch(redirectURL, fetchOptions);
-        }
-        if (!!res) break;
-      } catch (error) {
-        console.log("报错啦！");
-        continue;
-      }
-    }
+    // let res: any = null;
+
+    // for (let i = 0; i < 5; i++) {
+    //   try {
+    //     console.log("fetch before for..." + i);
+    //     res = await fetch(fetchUrl, fetchOptions);
+    //     console.log("redirected" + res.redirected);
+    //     console.log("status" + res.status);
+    //     console.log("body" + res.body);
+    //     console.log("url" + res.url);
+    //     while (res.redirected) {
+    //       const redirectURL = res.url;
+    //       res = await fetch(redirectURL, fetchOptions);
+    //     }
+    //     if (!!res) break;
+    //   } catch (error) {
+    //     console.log("报错啦！");
+    //     continue;
+    //   }
+    // }
+    //
 
     const newHeaders = new Headers(res.headers);
     newHeaders.delete("www-authenticate");
 
-    return new Response(res.body, {
+    return new Response(res.data, {
       status: res.status,
       statusText: res.statusText,
       headers: newHeaders,
