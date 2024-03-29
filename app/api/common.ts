@@ -50,16 +50,25 @@ export async function requestOpenai(req: NextRequest) {
 
   try {
     console.log("fetch before...");
-    let res = await fetch(fetchUrl, fetchOptions);
-    // to prevent browser prompt for credentials
-    console.log(res.redirected);
-    console.log(res.status);
-    console.log(res.body);
-    console.log(res.url);
-    while (res.redirected) {
-      const redirectURL = res.url;
-      res = await fetch(redirectURL, fetchOptions);
+
+    let res: any = null;
+    while (res != null) {
+      try {
+        res = await fetch(fetchUrl, fetchOptions);
+        // to prevent browser prompt for credentials
+        console.log(res.redirected);
+        console.log(res.status);
+        console.log(res.body);
+        console.log(res.url);
+        while (res.redirected) {
+          const redirectURL = res.url;
+          res = await fetch(redirectURL, fetchOptions);
+        }
+      } catch (error) {
+        continue;
+      }
     }
+
     const newHeaders = new Headers(res.headers);
     newHeaders.delete("www-authenticate");
 
@@ -68,8 +77,6 @@ export async function requestOpenai(req: NextRequest) {
       statusText: res.statusText,
       headers: newHeaders,
     });
-  } catch (e) {
-    return requestOpenai(req);
   } finally {
     clearTimeout(timeoutId);
   }
