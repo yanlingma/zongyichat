@@ -49,6 +49,7 @@ export async function requestOpenai(req: NextRequest) {
   };
 
   try {
+    console.log("fetch before...");
     let res = await fetch(fetchUrl, fetchOptions);
     // to prevent browser prompt for credentials
     console.log(res.redirected);
@@ -68,6 +69,7 @@ export async function requestOpenai(req: NextRequest) {
       headers: newHeaders,
     });
   } catch (e) {
+    return requestOpenai(req);
   } finally {
     clearTimeout(timeoutId);
   }
