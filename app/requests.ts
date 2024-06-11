@@ -44,7 +44,7 @@ function getHeaders() {
 
 export function requestOpenaiClient(path: string) {
   return (body: any, method = "POST") =>
-    fetch("/api/openai", {
+    fetch("", {
       method,
       headers: {
         "Content-Type": "application/json",
